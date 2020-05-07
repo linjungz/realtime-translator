@@ -4,36 +4,29 @@
     <meta charset="utf-8">
     <title>Amazon Transcribe WebSocket API - Sample Application</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    <link rel="stylesheet" href="https://cdn.shoelace.style/1.0.0-beta24/shoelace.css">
+    <link rel="stylesheet" href="font-awesome.css">
+    <link rel="stylesheet" href="shoelace.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <div class="container">
         <h1>
-            Real-time Audio Transcription
+            Serverless Realtime Translator
         </h1>
-        <p class="small-caps">
-            Using the <a href="https://aws.amazon.com/transcribe/">Amazon Transcribe</a> WebSocket API
-        </p>
-        <hr/>
-        <p>
-            Create an <a href="https://aws.amazon.com/free/">AWS Account</a>, attach the necessary <a
-                href="policy.json"> IAM policy</a>, and enter your Access Id and Secret Key below.
-        </p>
+        
 
         <div id="error" class="isa_error"></div>
 
-        <div class="row">
-            <div class="col">
+        <div  class="row">
+            <div hidden=true class="col">
                 <label>Access ID:</label>
-                <input type="password" id="access_id" placeholder="ACCESS ID" value="" />
+                <input  type="password" id="access_id" placeholder="ACCESS ID" value="" />
 
                 <label>Secret Key:</label>
-                <input type="password" id="secret_key" placeholder="SECRET KEY" value="" />
+                <input  type="password" id="secret_key" placeholder="SECRET KEY" value="" />
                 <label>Session Token (if using MFA):</label>
-                <input type="password" id="session_token" placeholder="SESSION TOKEN" value="" />
+                <input  type="password" id="session_token" placeholder="SESSION TOKEN" value="" />
             </div>
             <div class="col">
                 <label>Language: </label>
@@ -63,8 +56,18 @@
                 </select>
             </div>
         </div>
+        <label class="service">Transcribe: </label>
+        <label id=transcribe_status>Ready</label>
         <textarea id="transcript" placeholder="Press Start and speak into your mic" rows="5"
             readonly="readonly"></textarea>
+        <label class="service">Translate: </label>
+        <label id=translate_status>Ready</label>
+        <textarea id="translate" placeholder="Translated text here" rows="5"
+            readonly="readonly"></textarea>
+        <label>Polly: </label>   
+        <audio id="audioPlayback" controls>
+            <source id="audioSource" type="audio/mp3" src="">
+        </audio>
         <div class="row">
             <div class="col">
                 <button id="start-button" class="button-xl" title="Start Transcription">
@@ -76,6 +79,7 @@
                 <button id="reset-button" class="button-xl button-secondary" title="Clear Transcript"> 
                     Clear Transcript
                 </button>
+                
             </div>
             <div class="col">
                 <a class="float-right" href="https://aws.amazon.com/free/" aria-label="Amazon Web Services">
@@ -83,7 +87,10 @@
                 </a>
             </div>
         </div>
+        
     </div>
+
+    
 
     <a href="https://github.com/aws-samples/amazon-transcribe-websocket-static" aria-label="View source on GitHub">
         <svg id="github" width="80" height="80" viewBox="0 0 250 250" aria-hidden="true">
@@ -97,8 +104,10 @@
         </svg>
     </a>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="jquery.js"></script>
     <script src="dist/main.js"></script>
+    <script src="lib/aws-sdk-2.668.0.min.js"></script>
+    <script src="lib/identity_pool.js"></script>
 </body>
 
 </html>

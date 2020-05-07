@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  realtime-translator
+  @Author: Randy Lin
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+  TranslatorApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      
+  TranslateFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/
+      Handler: translate.lambda_handler
+      Runtime: python3.7
+      Events:
+        ApiEvent:
+          Type: Api 
+          Properties:
+            RestApiId: !Ref TranslatorApi
+            Path: /translate
+            Method: get 
+      Policies:
+        - TranslateFullAccess
+
+  PollyFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/
+      Handler: polly.lambda_handler
+      Runtime: python3.7
+      Events:
+        ApiEvent:
+          Type: Api 
+          Properties:
+            RestApiId: !Ref TranslatorApi
+            Path: /polly
+            Method: get
+      Environment:
+        Variables:
+          BucketName: !Ref TranslatorBucket
+      Policies:
+        - AmazonPollyFullAccess
+        - S3CrudPolicy:
+            BucketName:
+              !Ref TranslatorBucket
+
+  TranslatorBucket:
+    Type: AWS::S3::Bucket
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  TranslatorAPI:
+    Description: "API Gateway endpoint URL for Prod stage for Translator function"
+    Value: !Sub "https://${TranslatorApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+  TranslateLambda:
+    Description: "Translate Lambda Function ARN"
+    Value: !GetAtt TranslateFunction.Arn
+ 
